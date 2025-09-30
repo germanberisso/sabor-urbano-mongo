@@ -1,0 +1,32 @@
+{
+  "name": "sabor-urbano-mongo",
+  "version": "1.0.0",
+  "description": "Sabor Urbano - Sistema de Gestión Backend (MongoDB)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/germanberisso/sabor-urbano-mongo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/germanberisso/sabor-urbano-mongo/issues"
+  },
+  "homepage": "https://github.com/germanberisso/sabor-urbano-mongo#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.18.3",
+    "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

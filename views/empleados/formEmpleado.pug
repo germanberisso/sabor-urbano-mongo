@@ -1,0 +1,69 @@
+extends ../layout.pug
+
+block content
+  h1 #{empleado && empleado._id ? 'Editar Empleado' : 'Nuevo Empleado'}
+
+  form(method="POST", action=empleado && empleado._id ? `/empleados/${empleado._id}?_method=PUT` : '/empleados')
+    // Nombre
+    .mb-3
+      label.form-label(for="nombre") Nombre
+      input.form-control(type="text", id="nombre", name="nombre", required, value=empleado ? empleado.nombre : '')
+
+    // Apellido (obligatorio)
+    .mb-3
+      label.form-label(for="apellido") Apellido
+      input.form-control(type="text", id="apellido", name="apellido", required, value=empleado ? empleado.apellido : '')
+
+    // Email (obligatorio)
+    .mb-3
+      label.form-label(for="email") Email
+      input.form-control(type="email", id="email", name="email", required, value=empleado ? empleado.email : '')
+
+    // Teléfono
+    .mb-3
+      label.form-label(for="telefono") Teléfono
+      input.form-control(type="text", id="telefono", name="telefono", value=empleado ? empleado.telefono : '')
+
+    // Puesto
+    .mb-3
+      label.form-label(for="puesto") Puesto
+      select.form-select(name="puesto", id="puesto", required)
+        option(value="administrador", selected=empleado && empleado.puesto==='administrador') Administrador
+        option(value="cocinero", selected=empleado && empleado.puesto==='cocinero') Cocinero
+        option(value="repartidor", selected=empleado && empleado.puesto==='repartidor') Repartidor
+        option(value="mozo", selected=empleado && empleado.puesto==='mozo') Mozo
+        option(value="otro", selected=empleado && empleado.puesto==='otro') Otro
+
+    // Rol (obligatorio)
+    .mb-3
+      label.form-label(for="rol") Rol
+      select.form-select(name="rol", id="rol", required)
+        option(value="administrador", selected=empleado && empleado.rol==='administrador') Administrador
+        option(value="cocinero", selected=empleado && empleado.rol==='cocinero') Cocinero
+        option(value="repartidor", selected=empleado && empleado.rol==='repartidor') Repartidor
+        option(value="mozo", selected=empleado && empleado.rol==='mozo') Mozo
+        option(value="otro", selected=empleado && empleado.rol==='otro') Otro
+
+    // Área (obligatorio)
+    .mb-3
+      label.form-label(for="area") Área
+      select.form-select(name="area", id="area", required)
+        option(value="cocina", selected=empleado && empleado.area==='cocina') Cocina
+        option(value="reparto", selected=empleado && empleado.area==='reparto') Reparto
+        option(value="salon", selected=empleado && empleado.area==='salon') Salón
+        option(value="inventario", selected=empleado && empleado.area==='inventario') Inventario
+        option(value="otro", selected=empleado && empleado.area==='otro') Otro
+
+    // Salario
+    .mb-3
+      label.form-label(for="salario") Salario
+      input.form-control(type="number", id="salario", name="salario", min="0", step="0.01", required, value=empleado ? empleado.salario : '')
+
+    // Fecha de ingreso
+    .mb-3
+      label.form-label(for="fechaIngreso") Fecha de Ingreso
+      input.form-control(type="date", id="fechaIngreso", name="fechaIngreso", value=empleado ? empleado.fechaIngresoFormatted : '')
+
+    // Botones
+    button.btn.btn-primary(type="submit") #{empleado && empleado._id ? 'Actualizar' : 'Crear'}
+    a.btn.btn-secondary(href="/empleados") Cancelar
