@@ -1,126 +1,260 @@
-# sabor-urbano-mongo
-Plan de Migración a MongoDB
-1️⃣ Preparar el proyecto
+Sabor Urbano - Sistema de Gestión Backend (MongoDB)
 
-Crear carpeta nueva: sabor-urbano-mongo.
+Sistema de gestión integral para el restaurante "Sabor Urbano", desarrollado con Node.js, Express y MongoDB usando Mongoose. Incluye una API REST completa para operaciones CRUD, interfaces web responsivas con Pug y filtros avanzados para tareas. Mantiene la unificación de pedidos (presenciales y delivery) y el control de inventario, ahora con relaciones explícitas entre modelos en MongoDB: Cliente-Pedido, Tarea-Pedido y Tarea-Empleado.
 
-Inicializar proyecto Node.js:
+Tabla de Contenidos
 
-mkdir sabor-urbano-mongo
+Características
+
+Arquitectura
+
+Instalación
+
+Uso
+
+API Endpoints
+
+Interfaces Web
+
+Testing
+
+Estructura del Proyecto
+
+Normalización de Datos
+
+Tecnologías
+
+Cambios con MongoDB
+
+Contribución
+
+Licencia
+
+Responsabilidades del Equipo
+
+Bibliografía
+
+Características
+Funcionalidades Principales
+
+Gestión de Tareas: Control de actividades por áreas con estados (pendiente, en proceso, finalizada), prioridades (alta, media, baja), asignación a empleados y asociación opcional con pedidos.
+
+Gestión de Empleados: Registro, edición y eliminación con roles y áreas.
+
+Gestión de Clientes: Registro con validación de email único y búsqueda por nombre/apellido.
+
+Gestión de Pedidos: Unifica pedidos presenciales y delivery (Rappi, PedidosYa, propia, local). Parseo de ítems desde texto y cálculo proporcional de precios.
+
+Control de Inventario: Manejo de insumos por categorías, con alertas de stock bajo/sin stock.
+
+Filtros de Tareas: Combina estado, prioridad, fechas, empleado asignado, tipo de pedido y plataforma.
+
+Relaciones entre Modelos:
+
+Cliente-Pedido: Cada pedido está vinculado a un cliente mediante clienteId (ObjectId).
+
+Tarea-Pedido: Tareas de gestión de pedidos pueden asociarse a un pedido vía pedidoAsociado (ObjectId).
+
+Tarea-Empleado: Tareas pueden asignarse a un empleado vía empleadoAsignado (ObjectId).
+
+Características Técnicas
+
+API REST con CRUD y filtros avanzados usando Mongoose.
+
+Modelos POO para entidades con esquemas Mongoose.
+
+Middleware personalizado para validaciones.
+
+Vistas Pug con formularios y tablas responsivas.
+
+Base de datos MongoDB con relaciones y referencias (ref).
+
+Script de normalización para migración desde JSON a MongoDB.
+
+Arquitectura
+📁 sabor-urbano-mongo/
+├── controllers/
+│   ├── clientesController.js
+│   ├── empleadosController.js
+│   ├── insumosController.js
+│   ├── pedidosController.js
+│   └── tareasController.js
+├── models/
+│   ├── Cliente.js
+│   ├── Empleado.js
+│   ├── Insumo.js
+│   ├── Pedido.js
+│   └── Tarea.js
+├── routes/
+│   ├── clientes.js
+│   ├── empleados.js
+│   ├── insumos.js
+│   ├── pedidos.js
+│   └── tareas.js
+├── views/
+│   ├── layout.pug
+│   ├── error.pug
+│   ├── filters.pug
+│   ├── empleados/
+│   ├── insumos/
+│   ├── pedidos/
+│   └── tareas/
+├── middleware/
+│   └── validation.js
+├── scripts/
+│   └── normalizar_datos_mongo.js
+├── .env
+├── package.json
+└── app.js
+
+Instalación
+Prerrequisitos
+
+Node.js v18+
+
+npm v8+
+
+MongoDB 6+ en local o en Atlas
+
+Editor de código (VS Code recomendado)
+
+Instalación Paso a Paso
+
+Clonar repositorio:
+
+git clone https://github.com/tu-usuario/sabor-urbano-mongo.git
 cd sabor-urbano-mongo
-npm init -y
 
 
 Instalar dependencias:
 
-npm install express pug mongoose method-override dotenv
-npm install --save-dev nodemon
+npm install
 
 
-Crear estructura de carpetas similar al anterior:
-
-📁 sabor-urbano-mongo/
-├── controllers/
-├── models/
-├── routes/
-├── views/
-├── middleware/
-├── scripts/
-├── .env
-├── app.js
-└── package.json
-
-2️⃣ Configuración de MongoDB
-
-Crear archivo .env con:
+Configurar .env:
 
 PORT=3000
 MONGO_URI=mongodb://localhost:27017/sabor-urbano
 
 
-En app.js, conectar con Mongoose:
+Iniciar servidor:
 
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+npm run dev  # para desarrollo
+npm start    # para producción
 
-dotenv.config();
+Uso
+Interfaces Web
+URL	Descripción
+/	Redirige a tareas
+/tareas	Lista, crear, editar tareas
+/empleados	Gestión de empleados
+/pedidos	Gestión de pedidos
+/insumos	Control de inventario
+/filtros	Filtros avanzados para tareas
+API
 
-const app = express();
+Base URL: /api
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB conectado'))
-  .catch(err => console.error('Error MongoDB:', err));
+Formato: JSON
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
-app.set('view engine', 'pug');
+Métodos: GET, POST, PUT, DELETE, PATCH
 
-app.listen(process.env.PORT, () => console.log(`Servidor en puerto ${process.env.PORT}`));
+API Endpoints
 
-3️⃣ Crear modelos con Mongoose
+Se mantiene la misma estructura del proyecto anterior, pero ahora con MongoDB y ObjectId.
 
-Ejemplo models/Cliente.js:
+Ejemplo Clientes:
 
-import mongoose from 'mongoose';
+Método	Endpoint	Descripción
+GET	/api/clientes	Todos los clientes
+POST	/api/clientes	Crear cliente
+PUT	/api/clientes/:id	Actualizar cliente
+DELETE	/api/clientes/:id	Eliminar cliente
 
-const clienteSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  apellido: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  telefono: String
-}, { timestamps: true });
+Nota: Los IDs ahora son ObjectId de MongoDB.
 
-export default mongoose.model('Cliente', clienteSchema);
+Interfaces Web
 
+Sin cambios significativos respecto a Pug/Bootstrap.
 
-Hacer lo mismo con Empleado, Pedido, Insumo, Tarea.
+Formularios y tablas funcionan igual, solo que se consumen datos de MongoDB.
 
-Definir relaciones usando ref para campos relacionados:
+Testing
 
-empleadoAsignado: { type: mongoose.Schema.Types.ObjectId, ref: 'Empleado' }
-pedidoAsociado: { type: mongoose.Schema.Types.ObjectId, ref: 'Pedido' }
-clienteId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente' }
+Prueba con Thunder Client/Postman. Ejemplos:
 
-4️⃣ Controladores
+POST http://localhost:3000/api/pedidos
+Content-Type: application/json
 
-Mantener lógica similar al proyecto anterior, solo cambiando el CRUD para usar Mongoose:
+{
+  "clienteId": "64f3d2e1a1b2c3d4e5f67890",
+  "itemsText": "2 hamburguesas, 1 gaseosa",
+  "total": 5000,
+  "tipo": "delivery",
+  "plataforma": "rappi"
+}
 
-// Ejemplo: obtener todos los clientes
-import Cliente from '../models/Cliente.js';
+POST http://localhost:3000/api/tareas
+Content-Type: application/json
 
-export const getClientes = async (req, res) => {
-  try {
-    const clientes = await Cliente.find();
-    res.json(clientes);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+{
+  "titulo": "Confirmar RAPPI-456",
+  "area": "gestion_pedidos",
+  "prioridad": "alta",
+  "empleadoAsignado": "64f3d2e1a1b2c3d4e5f67891",
+  "pedidoAsociado": "64f3d2e1a1b2c3d4e5f67892"
+}
 
-5️⃣ Rutas
+Normalización de Datos
 
-Mantener las mismas rutas que antes (/api/clientes, /clientes/nuevo, /clientes/editar/:id) pero usando los controladores con Mongoose.
+scripts/normalizar_datos_mongo.js convierte los JSON del proyecto anterior a MongoDB.
 
-Para las vistas Pug, los formularios y tablas casi no cambian.
+Valida referencias y crea registros iniciales en MongoDB.
 
-6️⃣ Scripts de normalización
+npm run normalizar
 
-Cambiar scripts/normalizar_datos_v1.js para que lea los JSON y los inserte en MongoDB usando los modelos correspondientes.
+Tecnologías
 
-Opcional: dejar script para backup/restauración de MongoDB.
+Backend: Node.js v18+, Express 4.18.2, Mongoose 7
 
-7️⃣ README nuevo
+Base de Datos: MongoDB 6+
 
-Mantener el contenido anterior.
+Vistas: Pug 3.0.2, Bootstrap 5.1.3
 
-Agregar sección Cambios para MongoDB:
+Desarrollo: Nodemon, Thunder Client
 
-Base de datos: ahora MongoDB en lugar de JSON.
+Cambios con MongoDB
 
-Relaciones: campos ObjectId y ref.
+JSON reemplazado por MongoDB.
 
-CRUD con Mongoose.
+Relaciones con ObjectId y ref en Mongoose.
 
-.env para configuración.
+CRUD con Mongoose (find, findById, save, findByIdAndUpdate, findByIdAndDelete).
+
+Script de normalización adaptado a Mongo.
+
+.env para configuración de conexión.
+
+Contribución
+
+Fork → branch → commit → PR.
+
+Mantener estándares de ESLint y nombres descriptivos.
+
+Usar .env para configuración local.
+
+Responsabilidades del Equipo
+
+Igual que proyecto anterior, ahora el Database Manager administra MongoDB y scripts de migración.
+
+Bibliografía
+
+Documentación Oficial Node.js: https://nodejs.org/docs
+
+Express.js Guide: https://expressjs.com/
+
+Mongoose Docs: https://mongoosejs.com/docs/
+
+Pug Template Engine: https://pugjs.org/
+
+Bootstrap Documentation: https://getbootstrap.com/docs/5.1/
